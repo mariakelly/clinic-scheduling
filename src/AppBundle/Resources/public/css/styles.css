@@ -1,0 +1,13 @@
+/**
+ * Main Styles for Clinic Scheduling App
+ *
+ * Author: 	Maria D. Kelly (maria.d.kelly@gmail.com)
+ * Date:	July 11, 2015
+ */
+
+body {
+  padding-top: 50px;
+}
+.main-content {
+  padding: 40px 15px;
+}
