@@ -25,12 +25,12 @@ class UserController extends BaseController
      * @Method("GET")
      * @Template()
      */
-    public function indexAction($disabled = null)
+    public function indexAction(Request $request, $disabled = null)
     {
         $em = $this->getDoctrine()->getManager();
         $enabled = ($disabled != "active");
 
-        $routeUsed = $this->getRequest()->get('_route');
+        $routeUsed = $request->get('_route');
         $studentView = ($routeUsed == "student_view_users");
 
         $entities = $em->getRepository('AppBundle:User')->findBy(
@@ -138,7 +138,7 @@ class UserController extends BaseController
         $isProfile = false; # Are we looking at our own profile?
         if (is_null($id)) {
             $isProfile = true;
-            $user = $this->get('security.context')->getToken()->getUser();
+            $user = $this->get('security.token_storage')->getToken()->getUser();
             if ($user) {
                 $id = $user->getId();
             } else {
@@ -176,7 +176,7 @@ class UserController extends BaseController
         $isProfile = false; # Are we looking at our own profile?
         if (is_null($id)) {
             $isProfile = true;
-            $user = $this->get('security.context')->getToken()->getUser();
+            $user = $this->get('security.token_storage')->getToken()->getUser();
             if ($user) {
                 $id = $user->getId();
             } else {

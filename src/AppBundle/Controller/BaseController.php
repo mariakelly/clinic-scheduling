@@ -15,7 +15,7 @@ class BaseController extends Controller
      */
     public function isAdmin()
     {
-        return $this->get('security.context')->isGranted('ROLE_ADMIN');
+        return $this->get('security.authorization_checker')->isGranted('ROLE_ADMIN');
     }
 
     /**
