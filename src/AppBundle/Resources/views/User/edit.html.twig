@@ -15,9 +15,18 @@
     	<br>
     {% endif %}
     {{ form(edit_form) }}
-
+    {% if isProfile %}
+    	<br>
+    	<a class="btn btn-primary btn-xs" href="{{ path('profile') }}">&laquo; Cancel</a>
+    {% endif %}
 	{% if is_granted('ROLE_ADMIN') and not isProfile %}
 		<hr>
 	    {{ form(delete_form) }}
 	{% endif %}
 {% endblock %}
+{% if isProfile %}
+	{% block jQuery %}
+		{{ parent() }}
+		activePage("profile");
+	{% endblock %}
+{% endif %}

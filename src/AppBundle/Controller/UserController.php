@@ -20,37 +20,57 @@ class UserController extends BaseController
      * Lists all User entities.
      *
      * @Route("/admin/user", name="admin_user")
+     * @Route("/admin/user/in{disabled}", name="admin_user_disabled")
+     * @Route("/users", name="student_view_users")
      * @Method("GET")
      * @Template()
      */
-    public function indexAction()
+    public function indexAction($disabled = null)
     {
         $em = $this->getDoctrine()->getManager();
+        $enabled = ($disabled != "active");
 
-        $entities = $em->getRepository('AppBundle:User')->findBy(array(), array('lastName' => 'asc'));
+        $routeUsed = $this->getRequest()->get('_route');
+        $studentView = ($routeUsed == "student_view_users");
+
+        $entities = $em->getRepository('AppBundle:User')->findBy(
+            array('enabled' => $enabled), array('roles' => 'ASC', 'lastName' => 'asc'
+        ));
 
         return array(
             'entities' => $entities,
+            'enabled' => $enabled,
+            'studentView' => $studentView,
         );
     }
     /**
      * Creates a new User entity.
      *
      * @Route("/admin/user", name="admin_user_create")
+     * @Route("/admin/user/create-{admin}", name="admin_user_create_admin")
      * @Method("POST")
      * @Template("AppBundle:User:new.html.twig")
      */
-    public function createAction(Request $request)
+    public function createAction(Request $request, $admin = null)
     {
+        $createAdmin = ($admin == "admin");
         $entity = new User();
         $form = $this->createCreateForm($entity);
         $form->handleRequest($request);
 
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            $entity->setPassword($this->generatePassword(12));
-            $em->persist($entity);
-            $em->flush();
+            $entity->setPassword($this->generatePassword(25));
+            $entity->setEnabled(true);
+
+            if ($createAdmin) {
+                $entity->addRole('ROLE_ADMIN');
+            }
+
+            $userManager = $this->get('fos_user.user_manager');
+
+            $userManager->updatePassword($entity);
+            $userManager->updateUser($entity);
 
             return $this->redirect($this->generateUrl('admin_user_show', array('id' => $entity->getId())));
         }
@@ -68,10 +88,10 @@ class UserController extends BaseController
      *
      * @return \Symfony\Component\Form\Form The form
      */
-    private function createCreateForm(User $entity)
+    private function createCreateForm(User $entity, $createAdmin = false)
     {
         $form = $this->createForm(new UserType(), $entity, array(
-            'action' => $this->generateUrl('admin_user_create'),
+            'action' => $createAdmin ? $this->generateUrl('admin_user_create_admin', array('admin' => 'admin')) : $this->generateUrl('admin_user_create'),
             'method' => 'POST',
         ));
 
@@ -87,16 +107,19 @@ class UserController extends BaseController
      * Displays a form to create a new User entity.
      *
      * @Route("/admin/user/add", name="admin_user_new")
+     * @Route("/admin/user/add-{admin}", name="admin_user_new_admin")
      * @Method("GET")
      * @Template()
      */
-    public function newAction()
+    public function newAction($admin = null)
     {
+        $createAdmin = ($admin == "admin");
         $entity = new User();
-        $form   = $this->createCreateForm($entity);
+        $form   = $this->createCreateForm($entity, $createAdmin);
 
         return array(
             'entity' => $entity,
+            'createAdmin' => $createAdmin,
             'form'   => $form->createView(),
         );
     }
@@ -106,6 +129,7 @@ class UserController extends BaseController
      *
      * @Route("/admin/user/{id}", name="admin_user_show")
      * @Route("/profile", name="profile")
+     * @Route("/profile/", name="profile_slash")
      * @Method("GET")
      * @Template()
      */
@@ -188,7 +212,7 @@ class UserController extends BaseController
     */
     private function createEditForm(User $entity)
     {
-        $form = $this->createForm(new UserType(), $entity, array(
+        $form = $this->createForm(new UserType($this->isAdmin()), $entity, array(
             'action' => $this->generateUrl('admin_user_update', array('id' => $entity->getId())),
             'method' => 'PUT',
         ));

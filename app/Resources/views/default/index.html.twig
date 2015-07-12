@@ -1,13 +1,18 @@
 {% extends 'base.html.twig' %}
 {% set page_title = 'Home' %}
 {% block body %}
-    <h2>Welcome, {{ app.user.username }}!</h2>
+    <h2>Welcome, {% if app.user.firstName != "" %}{{ app.user.firstName }}{% else %}{{ app.user.username }}{% endif %}!</h2>
 
     <hr>
     <h4>Main Menu</h4>
 	<ul>
     	<li><a href="#">View my schedule</a></li>
     	<li><a href="#">Check schedule availability</a></li>
-    	<li><a href="#">Update my profile</a></li>
+    	<li><a href="{{ path('profile') }}">View/Update my Profile</a></li>
     </ul>
+{% endblock %}
+
+{% block jQuery %}
+	{{ parent() }}
+	activePage("home");
 {% endblock %}

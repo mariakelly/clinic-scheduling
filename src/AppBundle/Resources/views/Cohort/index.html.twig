@@ -1,0 +1,35 @@
+{% extends '::base.html.twig' %}
+
+{% set page_title = "Cohort List" %}
+
+{% block body -%}
+    <h1>Cohort List</h1>
+
+    <table class="records_list table table-striped">
+        <thead>
+            <tr>
+                <th>Actions</th>
+                <th>Name</th>
+                <th>Students</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for entity in entities %}
+            <tr>
+                <td>
+                    <a href="{{ path('admin_cohort_show', { 'id': entity.id }) }}">view</a> | 
+                    <a href="{{ path('admin_cohort_edit', { 'id': entity.id }) }}">edit</a>
+                </td>  
+                <td>{{ entity.name }}</td>
+                <td>{{ entity.students|length }} students</td>
+                <td>{% if entity.isArchived %}Archived{% else %}Active{% endif %}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a class="btn btn-primary pull-right" href="{{ path('admin_cohort_new') }}">
+        Add a New Cohort
+    </a>
+{% endblock %}

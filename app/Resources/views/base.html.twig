@@ -17,6 +17,20 @@
         <![endif]-->        
     </head>
     <body>
+              {% if is_granted('ROLE_ADMIN') %}
+                <div class="dropdown pull-right">
+                  <button class="btn btn-sm btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    Admin Menu
+                    <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                    <li><a href="{{ path('admin_user') }}">User Management</a></li>
+                    <li><a href="{{ path('admin_cohort') }}">Cohort Management</a></li>
+                    <li><a href="#">Schedule Availability</a></li>
+                  </ul>
+                </div>
+                <div style="clear:both;margin-bottom:-20px"></div>
+              {% endif %} 
         <nav class="navbar navbar-inverse navbar-fixed-top">
           <div class="container">
             <div class="navbar-header">
@@ -28,19 +42,21 @@
               </button>
               <a class="navbar-brand" href="#">MUIH Clinic Scheduling</a>
             </div>
+            {% if app.user is defined %}
             <div id="navbar" class="collapse navbar-collapse">
               <ul class="nav navbar-nav">
-                <li class="active"><a href="#">Home</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#contact">Contact</a></li>
+                <li id="menu-home"><a href="{{ path('homepage') }}">Home</a></li>
+                <li id="menu-users"><a href="{{ path('student_view_users') }}">Users</a></li>
+                <li id="menu-profile"><a href="{{ path('profile') }}">My Profile</a></li>
               </ul>
             </div><!--/.nav-collapse -->
+            {% endif %}
           </div>
         </nav>
 
         <div class="container">
 
-          <div class="main-content">        
+            <div class="main-content">
             {% block body %}
             {% endblock %}
           </div>
@@ -52,6 +68,14 @@
             <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
             <!-- Include all compiled plugins (below), or include individual files as needed -->
             <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+            <script src="{{ asset('bundles/app/js/scripts.js') }}"></script>
         {% endblock %}
+
+        <script type="text/javascript">
+            $(document).ready(function(){
+              {% block jQuery %}{% endblock %}
+            });
+        </script>
+
     </body>
 </html>

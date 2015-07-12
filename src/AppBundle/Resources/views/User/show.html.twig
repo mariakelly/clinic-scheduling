@@ -1,6 +1,6 @@
 {% extends '::base.html.twig' %}
 
-{% set page_title = "View User Details" %}
+{% set page_title = isProfile ? "My Profile" : "View User Details" %}
 
 {% block body -%}
     {% if not isProfile %}
@@ -42,9 +42,12 @@
         </tbody>
     </table>
 
-        <a class="btn btn-primary pull-right" href="{% if isProfile %}{{ path('edit_profile') }}{% else %}{{ path('admin_user_edit', { 'id': entity.id }) }}{% endif %}">
+        <a class="btn btn-primary {% if not isProfile %}pull-right{% endif %}" href="{% if isProfile %}{{ path('edit_profile') }}{% else %}{{ path('admin_user_edit', { 'id': entity.id }) }}{% endif %}">
             Edit {% if isProfile %}My Profile{% else %}User Details{% endif %}
         </a>
+        {% if isProfile %}
+            <a class="btn btn-success" href="{{ path('fos_user_change_password') }}">Change Password</a>
+        {% endif %}
 
 {% if is_granted('ROLE_ADMIN') and not isProfile %}
     <br><br>
@@ -52,3 +55,10 @@
     {{ form(delete_form) }}
 {% endif %}
 {% endblock %}
+
+{% if isProfile %}
+    {% block jQuery %}
+        {{ parent() }}
+        activePage("profile");
+    {% endblock %}
+{% endif %}

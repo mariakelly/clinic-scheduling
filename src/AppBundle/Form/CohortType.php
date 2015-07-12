@@ -6,13 +6,13 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class UserType extends AbstractType
+class CohortType extends AbstractType
 {
-    private $isAdmin;
+    private $isEditForm;
 
-    public function __construct($isAdmin = false)
+    public function __construct($isEditForm = false)
     {
-        $this->isAdmin = $isAdmin;
+        $this->isEditForm = $isEditForm;
     }
 
     /**
@@ -22,20 +22,12 @@ class UserType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('username')
-            ->add('email')
-            ->add('firstName')
-            ->add('firstName')
-            ->add('lastName')
-            ->add('skypeAccount')
-            ->add('cellNumber')
+            ->add('name')
         ;
 
-        if ($this->isAdmin) {
-            $builder
-                ->add('cohort')
-                ->add('enabled', null, array(
-                    'label' => 'Active User?',
+        if ($this->isEditForm) {
+            $builder->add('isArchived', null, array(
+                    'label' => 'Archive this Cohort',
                     'label_attr'  => array('class' => 'checkbox'),
                     'required' => false
                 )
@@ -49,7 +41,7 @@ class UserType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'AppBundle\Entity\User'
+            'data_class' => 'AppBundle\Entity\Cohort'
         ));
     }
 
@@ -58,6 +50,6 @@ class UserType extends AbstractType
      */
     public function getName()
     {
-        return 'appbundle_user';
+        return 'appbundle_cohort';
     }
 }

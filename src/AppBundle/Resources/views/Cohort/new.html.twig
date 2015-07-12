@@ -1,0 +1,13 @@
+{% extends '::base.html.twig' %}
+
+{% set page_title = "Create New Cohort" %}
+
+{% block body -%}
+    <a class="btn btn-xs btn-primary pull-right" href="{{ path('admin_cohort') }}">
+        &laquo; Return to Cohort List
+    </a>
+    <h1>Create New Cohort</h1>
+
+    {{ form(form) }}
+
+{% endblock %}

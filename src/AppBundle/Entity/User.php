@@ -36,13 +36,27 @@ class User extends BaseUser
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    protected $cellNumber;      
+    protected $cellNumber;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Cohort", inversedBy="students")
+     * @ORM\JoinColumn(name="cohort_id", referencedColumnName="id")
+     */
+    protected $cohort;
 
     public function __construct()
     {
         parent::__construct();
-        // your own logic
     }
+
+    /**
+     * To String
+     */
+    public function __toString()
+    {
+        return $this->firstName . " " . $this->lastName;
+    }
+
 
     /**
      * Get id
@@ -144,5 +158,28 @@ class User extends BaseUser
     public function getCellNumber()
     {
         return $this->cellNumber;
+    }
+
+    /**
+     * Set cohort
+     *
+     * @param \AppBundle\Entity\Cohort $cohort
+     * @return User
+     */
+    public function setCohort(\AppBundle\Entity\Cohort $cohort = null)
+    {
+        $this->cohort = $cohort;
+
+        return $this;
+    }
+
+    /**
+     * Get cohort
+     *
+     * @return \AppBundle\Entity\Cohort 
+     */
+    public function getCohort()
+    {
+        return $this->cohort;
     }
 }

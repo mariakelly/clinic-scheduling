@@ -45,8 +45,18 @@ label.required:after {
 	color: #d30000;
 }
 
+label.checkbox {
+	display: inline-block;
+	margin-right: 10px;
+}
+
+.cohort-details,
 .user-profile {
 	max-width: 500px;
 	border: 1px solid #ccc;
+}
+
+.border-bottom td {
+  border-bottom: 2px solid black;
 }
 

@@ -1,0 +1,48 @@
+{% extends '::base.html.twig' %}
+
+{% set page_title = "View Cohort" %}
+
+{% block body -%}
+    <a class="btn btn-xs btn-primary pull-right" href="{{ path('admin_cohort') }}">
+        &laquo; Return to Cohort List
+    </a>
+    <h1>View Cohort</h1>
+
+    <table class="record_properties table table-striped cohort-details">
+        <tbody>
+            <tr>
+                <th>ID</th>
+                <td>{{ entity.id }}</td>
+            </tr>
+            <tr>
+                <th>Name</th>
+                <td>{{ entity.name }}</td>
+            </tr>
+            <tr>
+                <th>Status</th>
+                <td>{% if entity.isArchived %}This cohort has been archived.{% else %}This cohort is ACTIVE.{% endif %}</td>
+            </tr>
+            {% if entity.students|length %}
+                <tr>
+                    <th>Students</th>
+                    <td>
+                        {% for student in entity.students %}
+                            - {{ student }}<br>
+                        {% endfor %}
+                    </td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+
+
+    <a class="btn btn-primary pull-right" href="{{ path('admin_cohort_edit', { 'id': entity.id }) }}">
+        Edit
+    </a>
+
+    {% if is_granted('ROLE_ADMIN') and entity.students|length == 0 %}
+        <br><br>
+        <hr>
+        {{ form(delete_form) }}
+    {% endif %}
+{% endblock %}

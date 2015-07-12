@@ -1,15 +1,17 @@
 {% extends '::base.html.twig' %}
 
-{% set page_title = "View all Users" %}
+{% set page_title = enabled ? "View all Users" : "View Inactive Users" %}
 
 {% block body -%}
-    <h1>User Management - View all Users</h1>
-
+    <h1>{% if not studentView %}User Management - {% endif %}View {% if enabled %}all {% else %}Inactive{% endif %} Users</h1>
+    {% if not enabled %}
+        <p>The following users are disabled and cannot currently login and use the system. To allow them to log in and access the system, click "edit" below and check the "Active User?" box on the next page.</p>
+    {% endif %}
+    <p>There are {{ entities|length }} {% if not enabled %}in{% endif %}active users.</p>
     <table class="records_list table table-striped">
         <thead>
             <tr>
-                {# <th>ID</th> #}
-                <th>Actions</th>
+                {% if not studentView %}<th>Actions</th>{% endif %}
                 <th>First Name</th>
                 <th>Last Name</th>
                 <th>Skype Account</th>
@@ -19,13 +21,15 @@
             </tr>
         </thead>
         <tbody>
+        {% set foundAdmins = false %}
         {% for entity in entities %}
-            <tr>
-                {# <td><a href="{{ path('admin_user_show', { 'id': entity.id }) }}">{{ entity.lastName }}, {{ entity.firstName }}</a></td> #}
-                <td>
-                    <a href="{{ path('admin_user_show', { 'id': entity.id }) }}">view</a> | 
-                    <a href="{{ path('admin_user_edit', { 'id': entity.id }) }}">edit</a>
-                </td>                
+            <tr {% if not foundAdmins and entities[loop.index + 1] is defined and 'ROLE_ADMIN' in entities[loop.index + 1].roles %}class="border-bottom"{% set foundAdmins = true %}{% endif %}>
+                {% if not studentView %}
+                    <td>
+                        <a href="{{ path('admin_user_show', { 'id': entity.id }) }}">view</a> | 
+                        <a href="{{ path('admin_user_edit', { 'id': entity.id }) }}">edit</a>
+                    </td>
+                {% endif %}
                 <td>{{ entity.firstName }}</td>
                 <td>{{ entity.lastName }}</td>
                 <td>{{ entity.skypeAccount }}</td>
@@ -37,9 +41,24 @@
         </tbody>
     </table>
 
+    {% if not studentView %}
+        {% if enabled %}
+            <a class="btn btn-primary pull-right" style="margin-left: 5px" href="{{ path('admin_user_disabled', {disabled: 'active'}) }}">
+                View Inactive Users
+            </a>
+            <a class="btn btn-primary pull-right" href="{{ path('admin_user_new') }}">
+                Add a New User
+            </a>
+        {% else %}
+            <a class="btn btn-primary pull-right" href="{{ path('admin_user') }}">
+                View Active Users
+            </a>
+        {% endif %}
+    {% endif %}
 
-    <a class="btn btn-primary pull-right" href="{{ path('admin_user_new') }}">
-        Add a New User
-    </a>
+{% endblock %}
 
-    {% endblock %}
+{% block jQuery %}
+    {{ parent() }}
+    activePage("users");
+{% endblock %}

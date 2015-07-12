@@ -1,11 +1,18 @@
 {% extends '::base.html.twig' %}
 
+{% set page_title = createAdmin ? "Create New Admin User" : "Create New User" %}
+
 {% block body -%}
     <a class="btn btn-xs btn-primary pull-right" href="{{ path('admin_user') }}">
         &laquo; Return to View All Users
     </a>	
-    <h1>Create a New User</h1>
-
+    <h1>Create a New {% if createAdmin %}Admin {% endif %}User</h1>
+    {% if not createAdmin %}
+    	Use the form below to create a new <strong>student</strong> account. <a href="{{ path('admin_user_new_admin', { admin: 'admin'}) }}">Click here to create a new Admin account</a>.
+	{% else %}
+    	Use the form below to create a new <strong>admin</strong> account. <a href="{{ path('admin_user_new') }}">Click here to create a new Student account</a>.
+    {% endif %}
+    <hr>
     {{ form(form) }}
 
 {% endblock %}

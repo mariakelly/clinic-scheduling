@@ -1,0 +1,18 @@
+{% extends '::base.html.twig' %}
+
+{% set page_title = "Edit Cohort" %}
+
+{% block body -%}
+    <a class="btn btn-xs btn-primary pull-right" href="{{ path('admin_cohort') }}">
+        &laquo; Return to Cohort List
+    </a>
+    <h1>Edit Cohort</h1>
+
+    {{ form(edit_form) }}
+
+    {% if is_granted('ROLE_ADMIN') and entity.students|length == 0 %}
+        <br><br>
+        <hr>
+        {{ form(delete_form) }}
+    {% endif %}
+{% endblock %}
