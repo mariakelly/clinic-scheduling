@@ -11,3 +11,34 @@ body {
 .main-content {
   padding: 40px 15px;
 }
+
+form label {
+	display: block;
+}
+
+input[type=text],
+input[type=password],
+input[type=email] {
+	display: block;
+	width: 60%;
+	margin-bottom: 10px;
+}
+
+label[for=remember_me] {
+	display: inline;
+}
+
+input[type=submit] {
+	display: block;
+	margin-top: 10px;
+}
+
+form[name=appbundle_user] input[type=text],
+form[name=appbundle_user] input[type=password],
+form[name=appbundle_user] input[type=email],
+.fos-user-content input[type=text],
+.fos-user-content input[type=password],
+.fos-user-content input[type=email] {
+	width: 30%;
+}
+

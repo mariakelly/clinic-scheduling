@@ -1,0 +1,19 @@
+{% extends '::base.html.twig' %}
+
+{% set page_title = "Edit User" %}
+
+{% block body -%}
+    <h1>User Management - Edit User</h1>
+    <h4>You are updating user: {{ entity.email }}</h4>
+
+    {{ form(edit_form) }}
+
+    <ul class="record_actions">
+	    <li>
+	        <a href="{{ path('admin_user') }}">
+	            Back to the list
+	        </a>
+	    </li>
+	    <li>{{ form(delete_form) }}</li>
+	</ul>
+{% endblock %}

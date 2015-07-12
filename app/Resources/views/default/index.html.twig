@@ -1,5 +1,13 @@
 {% extends 'base.html.twig' %}
-
+{% set page_title = 'Home' %}
 {% block body %}
-    Homepage.
+    <h2>Welcome, {{ app.user.username }}!</h2>
+
+    <hr>
+    <h4>Main Menu</h4>
+	<ul>
+    	<li><a href="#">View my schedule</a></li>
+    	<li><a href="#">Check schedule availability</a></li>
+    	<li><a href="#">Update my profile</a></li>
+    </ul>
 {% endblock %}
