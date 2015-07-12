@@ -3,17 +3,17 @@
 namespace AppBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use AppBundle\Entity\User;
 use AppBundle\Form\UserType;
+use AppBundle\Controller\BaseController;
 
 /**
  * User controller.
  */
-class UserController extends Controller
+class UserController extends BaseController
 {
 
     /**
@@ -27,7 +27,7 @@ class UserController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entities = $em->getRepository('AppBundle:User')->findAll();
+        $entities = $em->getRepository('AppBundle:User')->findBy(array(), array('lastName' => 'asc'));
 
         return array(
             'entities' => $entities,
@@ -75,7 +75,10 @@ class UserController extends Controller
             'method' => 'POST',
         ));
 
-        $form->add('submit', 'submit', array('label' => 'Create'));
+        $form->add('submit', 'submit', array(
+            'label' => 'Create Account',
+            'attr' => array('class' => 'btn btn-primary'),
+        ));
 
         return $form;
     }
@@ -102,11 +105,23 @@ class UserController extends Controller
      * Finds and displays a User entity.
      *
      * @Route("/admin/user/{id}", name="admin_user_show")
+     * @Route("/profile", name="profile")
      * @Method("GET")
      * @Template()
      */
-    public function showAction($id)
+    public function showAction($id = null)
     {
+        $isProfile = false; # Are we looking at our own profile?
+        if (is_null($id)) {
+            $isProfile = true;
+            $user = $this->get('security.context')->getToken()->getUser();
+            if ($user) {
+                $id = $user->getId();
+            } else {
+                throw $this->createNotFoundException('Unable to find User entity.');
+            }            
+        }
+
         $em = $this->getDoctrine()->getManager();
 
         $entity = $em->getRepository('AppBundle:User')->find($id);
@@ -119,6 +134,7 @@ class UserController extends Controller
 
         return array(
             'entity'      => $entity,
+            'isProfile'   => $isProfile,
             'delete_form' => $deleteForm->createView(),
         );
     }
@@ -127,11 +143,23 @@ class UserController extends Controller
      * Displays a form to edit an existing User entity.
      *
      * @Route("/admin/user/{id}/edit", name="admin_user_edit")
+     * @Route("/update-profile", name="edit_profile")
      * @Method("GET")
      * @Template()
      */
-    public function editAction($id)
-    {
+    public function editAction($id = null)
+    {        
+        $isProfile = false; # Are we looking at our own profile?
+        if (is_null($id)) {
+            $isProfile = true;
+            $user = $this->get('security.context')->getToken()->getUser();
+            if ($user) {
+                $id = $user->getId();
+            } else {
+                throw $this->createNotFoundException('Unable to find profile.');
+            }            
+        }
+
         $em = $this->getDoctrine()->getManager();
 
         $entity = $em->getRepository('AppBundle:User')->find($id);
@@ -145,6 +173,7 @@ class UserController extends Controller
 
         return array(
             'entity'      => $entity,
+            'isProfile'   => $isProfile,
             'edit_form'   => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         );
@@ -164,7 +193,10 @@ class UserController extends Controller
             'method' => 'PUT',
         ));
 
-        $form->add('submit', 'submit', array('label' => 'Update'));
+        $form->add('submit', 'submit', array(
+            'label' => 'Save Changes',
+            'attr' => array('class' => 'btn btn-primary'),
+        ));
 
         return $form;
     }
@@ -192,7 +224,11 @@ class UserController extends Controller
         if ($editForm->isValid()) {
             $em->flush();
 
-            return $this->redirect($this->generateUrl('admin_user_edit', array('id' => $id)));
+            if ($this->getReferringPath() == "/update-profile") {
+                return $this->redirect($this->generateUrl('profile'));
+            } else {
+                return $this->redirect($this->generateUrl('admin_user_show', array('id' => $id)));
+            }
         }
 
         return array(
@@ -239,7 +275,10 @@ class UserController extends Controller
         return $this->createFormBuilder()
             ->setAction($this->generateUrl('admin_user_delete', array('id' => $id)))
             ->setMethod('DELETE')
-            ->add('submit', 'submit', array('label' => 'Delete'))
+            ->add('submit', 'submit', array(
+                'label' => 'Delete',
+                'attr'  => array('class' => 'btn btn-warning'),
+            ))
             ->getForm()
         ;
     }
@@ -247,9 +286,11 @@ class UserController extends Controller
     /**
      * Generates a random password of $length.
      */
-    private function generatePassword($length) {
+    private function generatePassword($length)
+    {
         $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
         return substr(str_shuffle($chars),0,$length);
     }
+
 }

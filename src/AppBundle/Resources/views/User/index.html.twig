@@ -8,39 +8,37 @@
     <table class="records_list table table-striped">
         <thead>
             <tr>
-                <th>ID</th>
+                {# <th>ID</th> #}
+                <th>Actions</th>
                 <th>First Name</th>
                 <th>Last Name</th>
                 <th>Skype Account</th>
                 <th>Cell Number</th>
-                <th>Actions</th>
+                <th>Role</th>
+                <th>Last Login</th>
             </tr>
         </thead>
         <tbody>
         {% for entity in entities %}
             <tr>
-                <td><a href="{{ path('admin_user_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
+                {# <td><a href="{{ path('admin_user_show', { 'id': entity.id }) }}">{{ entity.lastName }}, {{ entity.firstName }}</a></td> #}
+                <td>
+                    <a href="{{ path('admin_user_show', { 'id': entity.id }) }}">view</a> | 
+                    <a href="{{ path('admin_user_edit', { 'id': entity.id }) }}">edit</a>
+                </td>                
                 <td>{{ entity.firstName }}</td>
                 <td>{{ entity.lastName }}</td>
                 <td>{{ entity.skypeAccount }}</td>
                 <td>{{ entity.cellNumber }}</td>
-                <td>
-                <ul>
-                    <li>
-                        <a href="{{ path('admin_user_show', { 'id': entity.id }) }}">show</a>
-                    </li>
-                    <li>
-                        <a href="{{ path('admin_user_edit', { 'id': entity.id }) }}">edit</a>
-                    </li>
-                </ul>
-                </td>
+                <td>{% if 'ROLE_ADMIN' in entity.roles or 'ROLE_SUPER_ADMIN' in entity.roles %}Admin{% else %}Student{% endif %}</td>
+                <td>{% if entity.lastLogin %}{{ entity.lastLogin|date('m/d/Y g:ia') }}{% else %}<em>Never</em>{% endif %}</td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
 
 
-    <a class="btn btn-primary" href="{{ path('admin_user_new') }}">
+    <a class="btn btn-primary pull-right" href="{{ path('admin_user_new') }}">
         Add a New User
     </a>
 

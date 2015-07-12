@@ -28,17 +28,25 @@ label[for=remember_me] {
 	display: inline;
 }
 
+button[type=submit],
 input[type=submit] {
 	display: block;
-	margin-top: 10px;
+	margin-top: 15px;
 }
 
-form[name=appbundle_user] input[type=text],
-form[name=appbundle_user] input[type=password],
-form[name=appbundle_user] input[type=email],
-.fos-user-content input[type=text],
-.fos-user-content input[type=password],
-.fos-user-content input[type=email] {
-	width: 30%;
+.fos-user-content form,
+form[name=appbundle_user] {
+	width: 50%;
+	min-width: 500px;
+}
+
+label.required:after {
+	content: '*';
+	color: #d30000;
+}
+
+.user-profile {
+	max-width: 500px;
+	border: 1px solid #ccc;
 }
 

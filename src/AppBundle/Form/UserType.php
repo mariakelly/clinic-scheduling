@@ -8,6 +8,13 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class UserType extends AbstractType
 {
+    private $isAdmin;
+
+    public function __construct($isAdmin = false)
+    {
+        $this->isAdmin = $isAdmin;
+    }
+
     /**
      * @param FormBuilderInterface $builder
      * @param array $options

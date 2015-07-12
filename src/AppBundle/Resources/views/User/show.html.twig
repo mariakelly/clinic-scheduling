@@ -1,44 +1,54 @@
 {% extends '::base.html.twig' %}
 
-{% block body -%}
-    <h1>User</h1>
+{% set page_title = "View User Details" %}
 
-    <table class="record_properties">
+{% block body -%}
+    {% if not isProfile %}
+        <a class="btn btn-xs btn-primary pull-right" href="{{ path('admin_user') }}">
+            &laquo; Return to View All Users
+        </a>
+        <h1>User Management - View User Details</h1>
+        <h4>Viewing user details for: {% if entity.firstName is defined and entity.firstName != "" %}{{ entity.firstName ~ " " ~ entity.lastName }}{% else %}{{ entity.email }}{% endif %}</h4>
+    {% else %}
+        <h1>My Profile</h1>
+    {% endif %}
+    <br>
+    <table class="record_properties table table-striped user-profile">
         <tbody>
             <tr>
-                <th>Id</th>
-                <td>{{ entity.id }}</td>
+                <th>Username</th>
+                <td>{{ entity.username }}</td>
             </tr>
             <tr>
-                <th>Firstname</th>
+                <th>Email</th>
+                <td>{{ entity.email }}</td>
+            </tr>
+            <tr>
+                <th>First Name</th>
                 <td>{{ entity.firstName }}</td>
             </tr>
             <tr>
-                <th>Lastname</th>
+                <th>Last Name</th>
                 <td>{{ entity.lastName }}</td>
             </tr>
             <tr>
-                <th>Skypeaccount</th>
+                <th>Skype Account</th>
                 <td>{{ entity.skypeAccount }}</td>
             </tr>
             <tr>
-                <th>Cellnumber</th>
+                <th>Cell Number</th>
                 <td>{{ entity.cellNumber }}</td>
             </tr>
         </tbody>
     </table>
 
-        <ul class="record_actions">
-    <li>
-        <a href="{{ path('admin_user') }}">
-            Back to the list
+        <a class="btn btn-primary pull-right" href="{% if isProfile %}{{ path('edit_profile') }}{% else %}{{ path('admin_user_edit', { 'id': entity.id }) }}{% endif %}">
+            Edit {% if isProfile %}My Profile{% else %}User Details{% endif %}
         </a>
-    </li>
-    <li>
-        <a href="{{ path('admin_user_edit', { 'id': entity.id }) }}">
-            Edit
-        </a>
-    </li>
-    <li>{{ form(delete_form) }}</li>
-</ul>
+
+{% if is_granted('ROLE_ADMIN') and not isProfile %}
+    <br><br>
+    <hr>
+    {{ form(delete_form) }}
+{% endif %}
 {% endblock %}

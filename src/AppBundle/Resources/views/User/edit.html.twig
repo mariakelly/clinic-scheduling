@@ -1,19 +1,23 @@
 {% extends '::base.html.twig' %}
 
-{% set page_title = "Edit User" %}
+{% set page_title = isProfile ? "Update Profile" : "Edit User" %}
 
-{% block body -%}
-    <h1>User Management - Edit User</h1>
-    <h4>You are updating user: {{ entity.email }}</h4>
-
+{% block body %}
+	{% if not isProfile %}
+        <a class="btn btn-xs btn-primary pull-right" href="{{ path('admin_user') }}">
+            &laquo; Return to View All Users
+        </a>
+	    <h1>User Management - Edit User</h1>
+	    <h4>You are updating user: {{ entity.email }}</h4>
+	    <hr>
+    {% else %}
+    	<h1>Update Profile</h1>
+    	<br>
+    {% endif %}
     {{ form(edit_form) }}
 
-    <ul class="record_actions">
-	    <li>
-	        <a href="{{ path('admin_user') }}">
-	            Back to the list
-	        </a>
-	    </li>
-	    <li>{{ form(delete_form) }}</li>
-	</ul>
+	{% if is_granted('ROLE_ADMIN') and not isProfile %}
+		<hr>
+	    {{ form(delete_form) }}
+	{% endif %}
 {% endblock %}
