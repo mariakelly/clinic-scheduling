@@ -1,0 +1,32 @@
+{% extends '::base.html.twig' %}
+
+{% set page_title = "System Configuration" %}
+
+{% block body -%}
+    <h1>System Configuration</h1>
+
+    <table class="records_list table table-striped">
+        <thead>
+            <tr>
+                <th>Actions</th>
+                <th>Name</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for entity in entities %}
+            <tr>
+                <td><a href="{{ path('admin_configure_edit', { 'id': entity.id }) }}">edit</a></td>
+                <td>{{ entity.name }}</td>
+                <td>{{ entity.value }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    {% if is_granted('ROLE_SUPER_ADMIN') %}
+        <a class="btn btn-primary pull-right" href="{{ path('admin_configure_new') }}">
+            Add a New Configuration Option
+        </a>
+    {% endif %}
+{% endblock %}

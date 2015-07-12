@@ -1,0 +1,13 @@
+{% extends '::base.html.twig' %}
+
+{% set page_title = "Create Configuration Option" %}
+
+{% block body -%}
+    <a class="btn btn-xs btn-primary pull-right" href="{{ path('admin_cohort') }}">
+        &laquo; Return to Configuration
+    </a>
+    <h1>Create Configuration Option</h1>
+
+    {{ form(form) }}
+
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends '::base.html.twig' %}
+
+{% set page_title = "Edit Configuration Option" %}
+
+{% block body -%}
+    <a class="btn btn-xs btn-primary pull-right" href="{{ path('admin_configure') }}">
+        &laquo; Return to Configuration
+    </a>
+    <h1>Edit Configuration Option</h1>
+
+    {{ form(edit_form) }}
+
+    {% if is_granted('ROLE_ADMIN') %}
+        <br><br>
+        <hr>
+        {{ form(delete_form) }}
+    {% endif %}
+{% endblock %}
